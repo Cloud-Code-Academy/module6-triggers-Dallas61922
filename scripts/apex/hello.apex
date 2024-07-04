@@ -5,6 +5,19 @@
 // You can also execute the entire file by running the command:
 //     SFDX: Execute Anonymous Apex with Editor Contents
 
-string tempvar = 'Enter_your_name_here';
-System.debug('Hello World!');
-System.debug('My name is ' + tempvar);
+public with sharing class OpportunityTriggerHandler {
+    public void doNotDeleteBankingWonOpps(List<Opportunity> listOfOpps) {
+        List<Opportunity> oppsToSave = [SELECT Name, Id, Account.Id, Account.Industry, StageName FROM Opportunity WHERE Id IN :listOfOpps];
+        For (Opportunity opp : oppsToSave){
+            System.debug(' 1 opp is '+ opp);
+            If (opp.Account.Industry == 'Banking'){
+                System.debug(' 2 opp is '+ opp);
+                If(opp.StageName == 'Closed Won'){
+                    System.debug(' 3 opp is ' + opp);
+                System.debug('Do not delete this opp since industry is ' + opp.Account.Industry);
+                opp.addError('Cannot delete closed opportunity for a banking account that is won');
+            }
+    }
+}
+}
+}
